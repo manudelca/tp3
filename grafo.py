@@ -18,10 +18,10 @@ class Grafo:
         self.dicc={}
 
     def agregar_vertice(self,vertice):
-        '''Agrega el vertice recibido al grafo.'''
+        '''Agrega el vertice recibido al grafo.Si el vertice ya se encuentra en
+        el grafo, la funcion no hace nada.'''
          if vertice not in self.dicc:
-+            self.dicc[vertice]={}
-+        #tendriamos que tirar una error en caso de else?
+            self.dicc[vertice]={}
 
     def borrar_vertice(self,vertice):
         '''Borra el vertice del grafo. Levanta un error si no se encuentra'''
