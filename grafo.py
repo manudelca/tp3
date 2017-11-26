@@ -18,8 +18,10 @@ class Grafo:
         self.dicc={}
 
     def agregar_vertice(self,vertice):
-        '''Agrega el vertice recibido al grafo.'''#No se pueden repetir vertices???
-        self.dicc[vertice]={}
+        '''Agrega el vertice recibido al grafo.'''  #No se pueden repetir vertices???creo que con eso lo arregle
+        if vertice not in self.dicc:
+            self.dicc[vertice]={}
+        #tendriamos que tirar una error en caso de else?
 
     def borrar_vertice(self,vertice):
         '''Borra el vertice del grafo. Levanta un error si no se encuentra'''
