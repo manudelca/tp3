@@ -54,9 +54,13 @@ def camino(grafo, origen, llegada):
                     break
                 cola.append(w)
     actual=llegada
-    while actual:
-        #No puedo implementar una primitiva que sea obtener_arista???
-    #Hay que ver que onda cuando tengo mas de una componente conexa
+    while actual and visitados[llegada]:
+        aristas=grafo.obtener_arista(actual,padre[actual])
+        lista.append(aristas[0][1])
+        actual=padre[actual]
+    return resultado[::-1]
+
+
 
 def actores_a_distancia(grafo, origen, n):
     """
@@ -96,9 +100,12 @@ def popularidad(grafo, actor):
     """
     cant_actores=len(actores_a_distancia(grafo,actor,2))
     peliculas={}
-    for pelicula in #Aca me conviene una primitiva que me devuelva todas las aristas de un vertice
-                    #hay que esperar a ver que contesta el chabon...
-
+    cant_peliculas=0
+    for pelicula in grafo.obtener_aristas_v(actor):
+        if not pelicula in peliculas:
+            cant_peliculas +=1
+            peliculas[pelicula]=True
+    return cant_actores*cant_peliculas
 
 def similares(grafo,origen, n):
     """
