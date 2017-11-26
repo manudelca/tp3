@@ -88,43 +88,51 @@ class Grafo:
                         aristas[arista_l]=True
         return list(aristas)
 
-def bfs(grafo,origen):
-    '''Recibe un grafo y un origen y recorre por capas el grafo. Devuelve un
-    diccionario con los padres de cada vertice y otro con el orden de cada vertice.'''
-    visitados={}
-    padre={}
-    orden={}
-    q=collections.deque()
-    q.append(origen)
-    visitados[origen]=True
-    orden[origen]=0
-    padre[origen]=None
-    while len(q):
-        v=q.popleft()
-        for w in grafo.obtener_adyacentes(v):
-            if not w in visitados:
-                visitados[w]=True
-                padre[w]=v
-                orden[w]=orden[v]+1
-                q.append(w)
-    return padre,orden
+    def obtener_arista(self,v1,v2):
+        '''Recibe dos vertices y devuelve una lista con las aristas que los une'''
+        #Hay que controlar los errores
+        resultado=[]
+        for arista in self.dicc[v1][v2]:
+            resultado.append(arista.arista,arista.info)
+        return resultado
 
-def dfs(grafo,origen):
-    '''Recibe un grafo y un origen y recorre por profundidad el grafo. Devuelve
-    un diccionario con los padres de cada de vertice y otro con el orden de cada
-    vertice.'''
-    visitados={}
-    padre={}
-    orden={}
-    dfs_visitar(grafo,origen,visitados,padre,orden)
-    return padre,orden
+#def bfs(grafo,origen):
+#    '''Recibe un grafo y un origen y recorre por capas el grafo. Devuelve un
+#    diccionario con los padres de cada vertice y otro con el orden de cada vertice.'''
+#    visitados={}
+#    padre={}
+#    orden={}
+#    q=collections.deque()
+#    q.append(origen)
+#    visitados[origen]=True
+#    orden[origen]=0
+#    padre[origen]=None
+#    while len(q):
+#        v=q.popleft()
+#        for w in grafo.obtener_adyacentes(v):
+#            if not w in visitados:
+#                visitados[w]=True
+#                padre[w]=v
+#                orden[w]=orden[v]+1
+#                q.append(w)
+#    return padre,orden
+
+#def dfs(grafo,origen):
+#    '''Recibe un grafo y un origen y recorre por profundidad el grafo. Devuelve
+#    un diccionario con los padres de cada de vertice y otro con el orden de cada
+#    vertice.'''
+#    visitados={}
+#    padre={}
+#    orden={}
+#    dfs_visitar(grafo,origen,visitados,padre,orden)
+#    return padre,orden
 
 
-def dfs_visitar(grafo,v,visitados,padre,orden):
-    '''Funcion recursiva de dfs'''
-    visitados[v]=True
-    for w in grafo.obtener_adyacentes(v):
-        if w not in visitados:
-            padre[w]=v
-            orden[v]=orden.get(v,0)+1
-            dfs_visitar(grafo,w,visitados,padre,orden)
+#def dfs_visitar(grafo,v,visitados,padre,orden):
+#    '''Funcion recursiva de dfs'''
+#    visitados[v]=True
+#    for w in grafo.obtener_adyacentes(v):
+#        if w not in visitados:
+#            padre[w]=v
+#            orden[v]=orden.get(v,0)+1
+#            dfs_visitar(grafo,w,visitados,padre,orden)
