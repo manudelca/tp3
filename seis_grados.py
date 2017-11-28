@@ -2,6 +2,7 @@ from collections import heapq
 from grafo import Grafo
 import random
 CONST_CANT_CAMINOS=100
+CONST_PORCENT_VERT=10
 
 
 def grafo_crear(nombre_archivo):
@@ -26,9 +27,12 @@ def grafo_crear(nombre_archivo):
                     peliculas[pelicula]=lista
                 lista.append(informacion[0])
     for pelicula,actores in peliculas.items():
-        for actor in actores:
-            grafo.agregar_arista()
-    #Podria ir agregando pero serian muchas iteraciones o no...?
+        for i in range(len(actores)):
+            for j in range(i,len(actores)):
+                grafo.agregar_arista(actores[i],actores[j],pelicula)
+                #Es horrible el orden de esto pero no se me ocurrio nada mejor...
+                #Habra que ver otra forma de cambiarlo...
+    return grafo
 
 
 def camino(grafo, origen, llegada):
@@ -59,7 +63,7 @@ def camino(grafo, origen, llegada):
     actual=llegada
     while actual and visitados[llegada]:
         aristas=grafo.obtener_arista(actual,padre[actual])
-        lista.append(aristas[0][1])
+        lista.append(aristas[0])
         actual=padre[actual]
     return resultado[::-1]
 
@@ -126,7 +130,7 @@ def similares(grafo,origen, n):
         raise ValueError('El grafo esta vacio')
     contador_v={}
     resultado=[]
-    largo_cam=#ALGO...
+    largo_cam=(grafo.cant_vertices())*CONST_PORCENT_VERT
     for i in range(CONST_CANT_CAMINOS):#La cantidad de caminos siempre tendra que ser mayor a las similitudes pedidas...
         v=random.choice(vertices)
         recorrido=0
@@ -156,7 +160,7 @@ def _similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados):
         return True
     visitados[origen]=True
     recorrido +=1
-    adyacentes=grafo.obtener_adyacentes(v)
+    adyacentes=grafo.obtener_adyacentes(v)*CONST_PORCENT_VERT//100
     if not adyacentes:
         return False
     while adyacentes:
