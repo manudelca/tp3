@@ -1,4 +1,5 @@
-from collections import heapq
+import collections
+import heapq
 from grafo import Grafo
 import random
 CONST_CANT_CAMINOS=100
@@ -28,7 +29,7 @@ def grafo_crear(nombre_archivo):
                 lista.append(informacion[0])
     for pelicula,actores in peliculas.items():
         for i in range(len(actores)):
-            for j in range(i,len(actores)):
+            for j in range(i+1,len(actores)):
                 grafo.agregar_arista(actores[i],actores[j],pelicula)
                 #Es horrible el orden de esto pero no se me ocurrio nada mejor...
                 #Habra que ver otra forma de cambiarlo...
@@ -54,16 +55,16 @@ def camino(grafo, origen, llegada):
     while len(cola) and not visitados[llegada]:
         v=cola.popleft()
         for w in grafo.obtener_adyacentes(v):
-            if not visitados[w]:
+            if not visitados.get(w,False):
                 visitados[w]=True
                 padre[w]=v
                 if w==llegada:
                     break
                 cola.append(w)
     actual=llegada
-    while actual and visitados[llegada]:
+    while actual and visitados[llegada] and padre[actual]:
         aristas=grafo.obtener_arista(actual,padre[actual])
-        lista.append(aristas[0])
+        resultado.append(aristas[0])
         actual=padre[actual]
     return resultado[::-1]
 
@@ -80,19 +81,19 @@ def actores_a_distancia(grafo, origen, n):
     visitados={}
     orden={}
     visitados[origen]=True
-    orden_actual=0
-    orden[origen]=orden_actual
+    orden[origen]=0
     cola=collections.deque()
     cola.append(origen)
-    while len(cola) and orden_actual<n:
+    while len(cola):
         v=cola.popleft()
-        orden_actual +=1
+        if orden[v]==n:
+            break
         for w in grafo.obtener_adyacentes(v):
             if not visitados.get(w,False):
                 visitados[w]=True
-                orden[w]=orden_actual
+                orden[w]=orden[v]+1
                 cola.append(w)
-                if orden_actual==n:
+                if orden[w]==n:
                     resultado.append(w)
     return resultado
 
@@ -108,8 +109,9 @@ def popularidad(grafo, actor):
     cant_actores=len(actores_a_distancia(grafo,actor,2))
     peliculas={}
     cant_peliculas=0
-    for pelicula in grafo.obtener_aristas_v(actor):
-        if not pelicula in peliculas:
+    for arista in grafo.obtener_aristas_v(actor):
+        pelicula=arista[1]
+        if not peliculas.get(pelicula,False):
             cant_peliculas +=1
             peliculas[pelicula]=True
     return cant_actores*cant_peliculas
@@ -130,7 +132,7 @@ def similares(grafo,origen, n):
         raise ValueError('El grafo esta vacio')
     contador_v={}
     resultado=[]
-    largo_cam=(grafo.cant_vertices())*CONST_PORCENT_VERT
+    largo_cam=(grafo.vertices_total())*CONST_PORCENT_VERT//100
     for i in range(CONST_CANT_CAMINOS):#La cantidad de caminos siempre tendra que ser mayor a las similitudes pedidas...
         v=random.choice(vertices)
         recorrido=0
@@ -142,9 +144,9 @@ def similares(grafo,origen, n):
     for i in range(n):
         actual=actores[i]
         heapq.heappush(heap_min,actual[::-1])#Invierto las posiciones de la tupla para que el heap compare las cantidades
-    for i in range(n,cant_actores)
+    for i in range(n,cant_actores):
         actual=actores[i]
-        if (actual[1]>heap_min[0][0])
+        if (actual[1]>heap_min[0][0]):
             heapq.heappushpop(heap_min,actual[::-1])
     for i in range(n):
         resultado.append((heapq.heappop(heap_min))[1])
@@ -160,13 +162,13 @@ def _similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados):
         return True
     visitados[origen]=True
     recorrido +=1
-    adyacentes=grafo.obtener_adyacentes(v)*CONST_PORCENT_VERT//100
+    adyacentes=grafo.obtener_adyacentes(origen)
     if not adyacentes:
         return False
     while adyacentes:
         w=random.choice(adyacentes)
         adyacentes.remove(w)#Esto tiene pinta de muy poco optimo...
         if w not in visitados:#Deberia verificar que no haya sido visitado? Porque si lo hago no es 100% random...
-            if(similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados))
+            if(_similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados)):
                 return True
     return False
