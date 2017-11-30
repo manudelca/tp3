@@ -43,7 +43,7 @@ class Grafo:
         if not lista1:
             self.dicc[v1][v2]=lista1
         lista1.append(arista)
-        lista2=(self.dicc[v2]).get(v1,[]):
+        lista2=(self.dicc[v2]).get(v1,[])
         if not lista2:
             self.dicc[v2][v1]=lista2
         lista2.append(arista)
@@ -113,47 +113,6 @@ class Grafo:
                 resultado.append((arista.arista,arista.info))
         return resultado
 
-    def cant_vertices(self):
+    def vertices_total(self):
         '''Devuelve la cantidad de vertices presentes en el grafo'''
         return self.cant_vertices
-
-#def bfs(grafo,origen):
-#    '''Recibe un grafo y un origen y recorre por capas el grafo. Devuelve un
-#    diccionario con los padres de cada vertice y otro con el orden de cada vertice.'''
-#    visitados={}
-#    padre={}
-#    orden={}
-#    q=collections.deque()
-#    q.append(origen)
-#    visitados[origen]=True
-#    orden[origen]=0
-#    padre[origen]=None
-#    while len(q):
-#        v=q.popleft()
-#        for w in grafo.obtener_adyacentes(v):
-#            if not w in visitados:
-#                visitados[w]=True
-#                padre[w]=v
-#                orden[w]=orden[v]+1
-#                q.append(w)
-#    return padre,orden
-
-#def dfs(grafo,origen):
-#    '''Recibe un grafo y un origen y recorre por profundidad el grafo. Devuelve
-#    un diccionario con los padres de cada de vertice y otro con el orden de cada
-#    vertice.'''
-#    visitados={}
-#    padre={}
-#    orden={}
-#    dfs_visitar(grafo,origen,visitados,padre,orden)
-#    return padre,orden
-
-
-#def dfs_visitar(grafo,v,visitados,padre,orden):
-#    '''Funcion recursiva de dfs'''
-#    visitados[v]=True
-#    for w in grafo.obtener_adyacentes(v):
-#        if w not in visitados:
-#            padre[w]=v
-#            orden[v]=orden.get(v,0)+1
-#            dfs_visitar(grafo,w,visitados,padre,orden)
