@@ -2,8 +2,8 @@ import collections
 import heapq
 from grafo import Grafo
 import random
-CONST_CANT_CAMINOS=100
-CONST_PORCENT_VERT=10
+CONST_CANT_CAMINOS=1000
+CONST_LARGO_CAM=100
 
 
 def grafo_crear(nombre_archivo):
@@ -125,19 +125,15 @@ def similares(grafo,origen, n):
     POST: Devuelve una lista de los n actores no adyacentes más similares al
         pedido. La lista no debe contener al actor de origen.
     """
-    #En los random walks solo me importa el que esta al final del recorrido o cuento
-    #a todos los del reorrido? Ahora esta programado para que cuente solo el del final
     vertices=grafo.obtener_vertices()
     if not vertices:
         raise ValueError('El grafo esta vacio')
     contador_v={}
     resultado=[]
-    largo_cam=(grafo.vertices_total())*CONST_PORCENT_VERT//100
-    for i in range(CONST_CANT_CAMINOS):#La cantidad de caminos siempre tendra que ser mayor a las similitudes pedidas...
+    for i in range(CONST_CANT_CAMINOS):
         v=random.choice(vertices)
         recorrido=0
-        visitados={}
-        _similares_visitar(grafo,contador_v,largo_cam,recorrido,v,visitados)#Deberia controlar que no devuelva False? Que podria pasar?
+        _similares_visitar(grafo,contador_v,CONST_LARGO_CAM,recorrido,v)
     heap_min=[]
     actores=list(contador_v.items())
     cant_actores=len(actores)
@@ -152,23 +148,18 @@ def similares(grafo,origen, n):
         resultado.append((heapq.heappop(heap_min))[1])
     return resultado[::-1]
 
-def _similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados):
+def _similares_visitar(grafo,contador_v,largo_cam,recorrido,origen):
     '''Funcion recursiva que recorre un camino del largo_cam de forma aleatoria
-    y cuando termina el aumenta en 1 al contador del vertice de llegada.'''
+    y aumenta en 1 al contador de cada vertice que visita.'''
     if recorrido==largo_cam:
-        cant=contador.get(origen,0)
-        cant +=1
-        contador[origen]=cant
         return True
-    visitados[origen]=True
+    cant=contador_v.get(origen,0)
+    cant +=1
+    contador_v[origen]=cant
     recorrido +=1
     adyacentes=grafo.obtener_adyacentes(origen)
-    if not adyacentes:
-        return False
-    while adyacentes:
-        w=random.choice(adyacentes)
-        adyacentes.remove(w)#Esto tiene pinta de muy poco optimo...
-        if w not in visitados:#Deberia verificar que no haya sido visitado? Porque si lo hago no es 100% random...
-            if(_similares_visitar(grafo,contador_v,largo_cam,recorrido,origen,visitados)):
-                return True
+    random.shuffle(adyacentes)
+    for w in adyacentes:
+        if(_similares_visitar(grafo,contador_v,largo_cam,recorrido,w)):
+            return True
     return False
